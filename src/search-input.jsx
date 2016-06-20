@@ -7,7 +7,8 @@ module.exports = React.createClass({
     placeholder: React.PropTypes.string,
     onSearch: React.PropTypes.func,
     throttle: React.PropTypes.number,
-    isFocus: React.PropTypes.bool
+    isFocus: React.PropTypes.bool,
+    text: React.PropTypes.string
   },
 
   getDefaultProps: function(){
@@ -19,12 +20,25 @@ module.exports = React.createClass({
     };
   },
 
+  getInitialState: function() {
+    return {
+      text: this.props.text || ''
+    };
+  },
+
   componentDidMount: function(){
     if(this.props.isFocus) this._setFocus();
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if(nextProps.isFocus) this._setFocus();
+    if(nextProps.isFocus) {
+      this._setFocus();
+    }
+    if(nextProps.text !== this.props.text) {
+      this.setState({
+        text: nextProps.text
+      });
+    }
   },
 
   render: function(){
@@ -39,6 +53,8 @@ module.exports = React.createClass({
             ref="searchInput"
             type="text" 
             autoComplete="off"
+            value={this.state.text}
+            onChange={this._onInputChange}
             className="search-input"
             placeholder={props.placeholder}
             onKeyDown={this._onKeyDown} />
@@ -76,8 +92,15 @@ module.exports = React.createClass({
     var inputEle;
     inputEle = ReactDOM.findDOMNode(this.refs.searchInput);
     inputEle.focus();
+  },
+
+  _onInputChange: function(e) {
+    var inputEle;
+    inputEle = ReactDOM.findDOMNode(this.refs.searchInput);
+    this.setState({
+      text: inputEle.value
+    });
   }
 
 });
-
 
